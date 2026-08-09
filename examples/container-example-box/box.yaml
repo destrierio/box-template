@@ -1,5 +1,5 @@
 # Container example manifest
-# Docs: https://docs.destrier.io/contributing/box-structure#the-manifest
+# Docs: https://docs.destrier.io/contributing/box-structure#manifest-examples
 
 # Identity
 id: bulletin

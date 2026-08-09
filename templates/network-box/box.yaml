@@ -1,5 +1,5 @@
 # Network box manifest
-# Docs: https://docs.destrier.io/contributing/box-structure#configure-box-yaml
+# Docs: https://docs.destrier.io/contributing/box-structure#manifest-examples
 
 # Identity
 id: your-box-id
