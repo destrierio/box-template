@@ -4,37 +4,46 @@
 # Identity
 id: signal-desk
 competitionId: reference-examples
-version: 1.0.0
+version: 1.0.3
 name: "Signal Desk"
 authors: [destrier-team]
-
 # Classification
 runType: vm
 category: [web, file-disclosure]
 difficulty: easy
-
 # Objectives
 objective: "Exploit path traversal in the file portal and read the flag as the analyst user"
 flags:
   - host: host
     gating: user
     value: "destrier{51gn4l_d35k_p47h_7r4v3r54l}"
-
 # Networking
 entrypoint:
   network: main
 networks:
   - name: main
     cidr: 10.10.2.0/24
-
 # Hosts
 hosts:
   - name: host
     kind: vm
     os: linux
     build:
-      source: target/host
+      # ⚠️ `image`, not `source`. The compiler refuses a VM host that builds from
+      # source -- nothing builds and publishes host images yet -- so an author
+      # runs Packer themselves and points this at what it produced. `boxr box
+      # push` uploads the file and rewrites this key into its content digest.
+      image:
+        # written by `boxr box push` — do not edit by hand
+        artifact: sha256:2fe400c0bba86413c77e7783d833d32190f0560dc964bf1898ed125e711a0c45
+        format: qcow2
+        sizeBytes: 2305949696
+        path: target/host/output-signal-desk/signal-desk.qcow2
     networks:
       - name: main
         ip: 10.10.2.10
-    healthcheck: "http:8000/health"
+    # ⚠️ No healthcheck DELIBERATELY, and it is what selects the substrate. A vm
+    # host that declares one is pinned to QEMU-on-host, because a native GCE hop
+    # boots the author's own image and has no in-cell probe to answer with. A
+    # native hop's readiness is the instance reaching RUNNING -- which for a
+    # native box is the guest itself, not a host that merely started qemu.

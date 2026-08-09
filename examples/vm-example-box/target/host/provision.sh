@@ -59,7 +59,7 @@ class Handler(BaseHTTPRequestHandler):
         self.write_text(404, "not found\n")
 
 
-ThreadingHTTPServer(("0.0.0.0", 8000), Handler).serve_forever()
+ThreadingHTTPServer(("0.0.0.0", 80), Handler).serve_forever()
 PY
 
 chown -R analyst:analyst /opt/signal-desk
@@ -75,6 +75,10 @@ Wants=network-online.target
 ExecStart=/usr/bin/python3 /opt/signal-desk/app.py
 Restart=always
 User=analyst
+# The portal answers on 80, which is privileged, and this service is deliberately
+# NOT root -- the box's whole point is that reaching the analyst user is a step.
+# The capability is the narrow way to bind a low port without giving up that.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 [Install]
 WantedBy=multi-user.target
