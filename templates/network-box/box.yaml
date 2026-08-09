@@ -11,7 +11,7 @@ authors: [your-handle]
 # Classification
 runType: network
 category: [lateral-movement]          # One or more hyphenated skill areas
-difficulty: hard                      # easy | medium | hard | insane — also sets the run budget
+difficulty: hard                      # easy | medium | hard | insane
 
 # Objectives
 objective: "Describe the final objective."

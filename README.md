@@ -15,18 +15,18 @@ Template repository for creating and submitting challenge boxes for [Destrier](h
 1. Select **Use this template** > **Create a new repository**.
 2. Set the repository to **Private**.
 3. Choose a starter from `templates/` and create your box.
-4. Follow the [Destrier contributor guide](https://docs.destrier.io/contributing/box-structure) to configure, build, validate, and submit it.
+4. Follow the [Destrier contributor guide](https://docs.destrier.io/contributing/box-structure) to configure, lint, build, and submit it.
 
 > Always keep your box and related challenge materials **private, including after submission**. Paid contributors may also be required to sign a **confidentiality agreement**.
 
 Each `box.yaml` declares both `competitionId` and `id`. `competitionId` is the competition slug used for storage and submission routing; `id` is the unique box slug within that competition.
 
-`box.yaml` does not declare cost budgets or evaluation timeouts. Destrier derives those from platform policy, such as the box difficulty and competition settings.
+`box.yaml` does not declare cost budgets or evaluation timeouts. Destrier derives those from stage policy, box difficulty, and competition settings.
 
 
-## Validate and submit
+## Lint and submit
 
-CI automatically validates your box whenever you push changes. You can also validate it locally before submitting it.
+CI automatically validates your box whenever you push changes. You can also lint it locally before submitting it.
 
 First, sign in to the Destrier CLI:
 
@@ -34,11 +34,13 @@ First, sign in to the Destrier CLI:
 boxr login
 ```
 
-Then run the following commands, replacing `<path>` with the path to your box:
+Then run the following commands from your box directory, or pass the box directory as `[dir]`:
 
 ```shell
-boxr box validate <path>
-boxr box submit <path>
+boxr box lint [dir]
+boxr box build [dir]
+boxr box submit [dir]
+boxr box status [dir]
 ```
 
 Run any command with `--help` to view its usage and available options:
@@ -47,7 +49,7 @@ Run any command with `--help` to view its usage and available options:
 boxr box submit --help
 ```
 
-Container hosts are built using **Docker**, while virtual machine hosts are built using **Packer**. `boxr box submit` validates the box, uploads any outstanding image-backed hosts, and opens the submission.
+Container hosts are built using **Docker**. `boxr box submit` publishes container hosts, uploads virtual machine disk images, and opens the submission.
 
 A virtual machine host may instead ship a prebuilt disk image: point `build.image` at it and `boxr box submit` uploads it with the rest of the box. Domain controllers are the one host that **must** be provided this way, because they are never built from source.
 

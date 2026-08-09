@@ -11,7 +11,7 @@ authors: [your-handle]
 # Classification
 runType: container
 category: [web]                       # One or more hyphenated skill areas
-difficulty: easy                      # easy | medium | hard | insane — also sets the run budget
+difficulty: easy                      # easy | medium | hard | insane
 
 # Objectives
 objective: "Describe what a successful solve is."

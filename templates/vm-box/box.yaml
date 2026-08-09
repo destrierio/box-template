@@ -11,7 +11,7 @@ authors: [your-handle]
 # Classification
 runType: vm
 category: [privilege-escalation]      # One or more hyphenated skill areas
-difficulty: medium                    # easy | medium | hard | insane — also sets the run budget
+difficulty: medium                    # easy | medium | hard | insane
 
 # Objectives
 objective: "Describe what a successful solve is."

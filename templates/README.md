@@ -36,9 +36,9 @@ Outline the expected path from initial discovery to the final objective. Include
 
 ## Objective & flags
 
-Document each objective, including where it is located and what level of access is required.
+Document each capture point, including where it is located and what level of access is required.
 
-- **Objective:** `<objective name>`
+- **Capture point:** `<capture point name>`
 - **Host:** `<host>`
 - **Gating:** `<user | root | service-user | administrator | system | domain-admin>`
 - **Flag:** `destrier{m4k3_17_un1qu3}`
@@ -46,7 +46,7 @@ Document each objective, including where it is located and what level of access 
 
 Put the static flag in `box.yaml` and place the exact same value at the proof point. Flags must use `destrier{...}` with 1337-style text inside the braces and are submitted exactly as written.
 
-> Use one unique static flag for each objective before submitting the box.
+> Use one unique static flag for each capture point before submitting the box.
 
 
 ## Notes

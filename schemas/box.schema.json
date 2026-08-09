@@ -77,7 +77,7 @@
         "hard",
         "insane"
       ],
-      "description": "The validated difficulty of the box. This also sets the run's wall-clock and cost budget."
+      "description": "The validated difficulty of the box. Destrier uses it when assigning stages, time limits, and cost budgets."
     },
     "objective": {
       "type": "string",
@@ -220,17 +220,17 @@
                   "image",
                   "digest"
                 ],
-                "description": "The container image built from `build.source` and published to Destrier's managed registry. Added by `boxr box submit`; contributors should not write it by hand.",
+                "description": "The container image built from `build.source` and published to Destrier's managed registry. Generated during submission; contributors should not write it by hand.",
                 "properties": {
                   "image": {
                     "type": "string",
                     "minLength": 1,
-                    "description": "The fully-qualified repository where the image was pushed, with no tag or digest. The platform chooses it."
+                    "description": "The fully-qualified repository where the image was published, with no tag or digest. The platform chooses it."
                   },
                   "digest": {
                     "type": "string",
                     "pattern": "^sha256:[a-f0-9]{64}$",
-                    "description": "The image manifest digest resolved by the registry for the pushed tag, not one computed on the author's machine."
+                    "description": "The image manifest digest resolved by the registry for the published image, not one computed on the author's machine."
                   },
                   "provenance": {
                     "type": "object",
@@ -251,14 +251,14 @@
                       "builder": {
                         "type": "string",
                         "minLength": 1,
-                        "description": "The tool that performed the build, for example `boxr/0.1.0` for a build on the author's machine."
+                        "description": "Identifier for the builder that produced the image."
                       }
                     }
                   }
                 }
               },
               "image": {
-                "description": "A prebuilt disk image for this host. Author it as a relative path within the box; `boxr box push` uploads it and rewrites this field into the digest-backed form below.",
+                "description": "A prebuilt disk image for this host. Author it as a relative path within the box. After upload, this field is rewritten into the digest-backed form below.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -273,7 +273,7 @@
                       "format",
                       "sizeBytes"
                     ],
-                    "description": "The uploaded image, referenced by content digest. Added by `boxr box push`; contributors should not write it by hand.",
+                    "description": "The uploaded image, referenced by content digest. Generated during image upload; contributors should not write it by hand.",
                     "properties": {
                       "artifact": {
                         "type": "string",
@@ -285,7 +285,7 @@
                         "enum": [
                           "qcow2"
                         ],
-                        "description": "The disk image format. `boxr box push` converts other formats to qcow2 before uploading."
+                        "description": "The uploaded disk image format. Stored images currently use qcow2."
                       },
                       "sizeBytes": {
                         "type": "integer",
