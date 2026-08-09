@@ -2,30 +2,31 @@
 # Docs: https://docs.destrier.io/contributing/box-structure#manifest-examples
 
 # Identity
-id: your-box-id
-competitionId: your-competition-id
+id: your-box-id                       # Unique within the competition, lowercase, hyphens only
+competitionId: your-competition-id    # Competition slug, lowercase, hyphens only
 version: 1.0.0
 name: "Your box name"
 authors: [your-handle]
 
 # Classification
 runType: vm
-category: [privilege-escalation]
-difficulty: medium
+category: [privilege-escalation]      # One or more hyphenated skill areas
+difficulty: medium                    # easy | medium | hard | insane — also sets the run budget
 
 # Objectives
 objective: "Describe what a successful solve is."
+# Each value is planted verbatim in the target; destrier{...} with 1337 text inside.
 flags:
-  - host: host
-    gating: user
+  - host: host                        # Must match a host below
+    gating: user                      # user | root | service-user | administrator | system | domain-admin
     value: "destrier{u53r_p0r741_4cc355}"
-  - host: host
-    gating: root
+  - host: host                        # Must match a host below
+    gating: root                      # user | root | service-user | administrator | system | domain-admin
     value: "destrier{r007_4cc355_gr4n73d}"
 
-# Networking
+# Networking (each network is a /24 inside 10.10.0.0/16)
 entrypoint:
-  network: main
+  network: main                       # Must match a network below
 networks:
   - name: main
     cidr: 10.10.0.0/24
@@ -36,8 +37,8 @@ hosts:
     kind: vm
     os: linux
     build:
-      source: target/host
+      source: target/host             # Dir with your Packer template
     networks:
       - name: main
-        ip: 10.10.0.10
-    healthcheck: "tcp:22"
+        ip: 10.10.0.10                # Static IP, inside the network's /24
+    healthcheck: "tcp:22"             # Optional — tcp:PORT | http:PORT/path | https:PORT/path

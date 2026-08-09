@@ -4,35 +4,39 @@
 # Identity
 id: bulletin
 competitionId: reference-examples
-version: 1.0.0
+version: 1.0.1
 name: "Bulletin"
 authors: [destrier-team]
-
 # Classification
 runType: container
 category: [web]
 difficulty: easy
-
 # Objectives
 objective: "Achieve server-side template injection (SSTI) and read the flag as the web service user"
 flags:
   - host: app
     gating: service-user
     value: "destrier{bul1371n_53rv1c3_f1l3_r34d}"
-
 # Networking
 entrypoint:
   network: main
 networks:
   - name: main
     cidr: 10.10.0.0/24
-
 # Hosts
 hosts:
   - name: app
     kind: container
     build:
       source: target/app
+      publishedImage:
+        # written by `boxr box submit` — do not edit by hand
+        image: asia-southeast1-docker.pkg.dev/project-dd005b5a-f6e7-4839-b36/destrier-boxes/org/vlf39vngzfd8sru05h3r8bcpbcarxtnn/bulletin/app
+        digest: sha256:26096a0c84ced1af734b86472ec9e04a7fba33ffd38917626997817ad3c17c30
+        provenance:
+          source: target/app
+          contextDigest: sha256:d76cd03a5bdae8cd4b8d5e07dc117d5bcf37a4eca0fc5e204c283cc8cf0805b4
+          builder: boxr/dev
     networks:
       - name: main
         ip: 10.10.0.10

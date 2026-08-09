@@ -137,6 +137,9 @@ def check(box_yaml: Path) -> list[str]:
         if flag["host"] not in host_names:
             errors.append(f"flags: host '{flag['host']}' is not a defined host")
 
+    # Flags are static, so two flags sharing a value means capturing one hands
+    # over the other -- across hosts, and across gating levels that are supposed
+    # to represent different work.
     flag_values = [flag["value"] for flag in doc["flags"]]
     for value in duplicates(flag_values):
         errors.append(f"flags: duplicate flag value '{value}'")
@@ -213,6 +216,9 @@ def check(box_yaml: Path) -> list[str]:
             resolved_image = box_path(
                 box_dir, image_path, f"host '{name}': build.image", errors
             )
+            # ⚠️ Only checked while `image` is still the author's path. An
+            # already-pushed image legitimately has no file here: the platform
+            # holds the bytes by digest and the path is kept as a breadcrumb.
             if (
                 resolved_image is not None
                 and isinstance(image, str)

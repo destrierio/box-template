@@ -2,30 +2,31 @@
 # Docs: https://docs.destrier.io/contributing/box-structure#manifest-examples
 
 # Identity
-id: your-box-id
-competitionId: your-competition-id
+id: your-box-id                       # Unique within the competition, lowercase, hyphens only
+competitionId: your-competition-id    # Competition slug, lowercase, hyphens only
 version: 1.0.0
 name: "Your box name"
 authors: [your-handle]
 
 # Classification
 runType: network
-category: [lateral-movement]
-difficulty: hard
+category: [lateral-movement]          # One or more hyphenated skill areas
+difficulty: hard                      # easy | medium | hard | insane — also sets the run budget
 
 # Objectives
 objective: "Describe the final objective."
+# Each value is planted verbatim in the target; destrier{...} with 1337 text inside.
 flags:
-  - host: dmz
-    gating: root
+  - host: dmz                         # Must match a host below
+    gating: root                      # user | root | service-user | administrator | system | domain-admin
     value: "destrier{dmz_p1v07_c0mpl373}"
-  - host: dc
-    gating: domain-admin
+  - host: dc                          # Must match a host below
+    gating: domain-admin              # user | root | service-user | administrator | system | domain-admin
     value: "destrier{d0m41n_4dm1n_pr00f}"
 
-# Networking
+# Networking (each network is a /24 inside 10.10.0.0/16)
 entrypoint:
-  network: external
+  network: external                   # Must match a network below
 networks:
   - name: external
     cidr: 10.10.0.0/24
@@ -37,20 +38,20 @@ hosts:
   - name: dmz
     kind: container
     build:
-      source: target/dmz
+      source: target/dmz              # Dir with your Dockerfile + app source
     networks:
       - name: external
-        ip: 10.10.0.10
+        ip: 10.10.0.10                # Static IP, inside the network's /24
       - name: corp
-        ip: 10.10.1.10
-    healthcheck: "tcp:80"
+        ip: 10.10.1.10                # Static IP, inside the network's /24
+    healthcheck: "tcp:80"             # Optional — tcp:PORT | http:PORT/path | https:PORT/path
   - name: dc
     kind: vm
     os: windows
     role: domain-controller
     build:
-      image: target/dc/dc.vmdk
+      image: target/dc/dc.vmdk        # A domain controller is never built from source
     networks:
       - name: corp
-        ip: 10.10.1.20
-    healthcheck: "tcp:3389"
+        ip: 10.10.1.20                # Static IP, inside the network's /24
+    healthcheck: "tcp:3389"           # Optional — tcp:PORT | http:PORT/path | https:PORT/path
