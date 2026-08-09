@@ -7,19 +7,16 @@ competitionId: reference-examples
 version: 1.0.0
 name: "Relay Yard"
 authors: [destrier-team]
-
 # Classification
 runType: network
 category: [web, lateral-movement]
 difficulty: hard
-
 # Objectives
 objective: "Abuse the gateway fetcher to reach the internal workstation and read the flag"
 flags:
   - host: workstation
     gating: user
     value: "destrier{r3l4y_y4rd_55rf_p1v07}"
-
 # Networking
 entrypoint:
   network: external
@@ -28,13 +25,20 @@ networks:
     cidr: 10.10.0.0/24
   - name: internal
     cidr: 10.10.1.0/24
-
 # Hosts
 hosts:
   - name: gateway
     kind: container
     build:
       source: target/gateway
+      publishedImage:
+        # written by `boxr box submit` — do not edit by hand
+        image: asia-southeast1-docker.pkg.dev/project-dd005b5a-f6e7-4839-b36/destrier-boxes/org/vlf39vngzfd8sru05h3r8bcpbcarxtnn/relay-yard/gateway
+        digest: sha256:891e59cb367ccac7365154f1c7e8a329be2749f13058688f886928b0f4121777
+        provenance:
+          source: target/gateway
+          contextDigest: sha256:91b50c6d8d50e3222ecce5182c41e4205945443d4095ee03cca860226b975f9c
+          builder: boxr/dev
     networks:
       - name: external
         ip: 10.10.0.10
@@ -45,7 +49,16 @@ hosts:
     kind: vm
     os: linux
     build:
-      source: target/workstation
+      # ⚠️ `image`, not `source`: the compiler refuses a vm host that builds from
+      # source, because nothing builds and publishes host images yet. Run Packer
+      # yourself and point this at what it produced; `boxr box push` uploads the
+      # file and rewrites this into its content digest.
+      image:
+        # written by `boxr box push` — do not edit by hand
+        artifact: sha256:e18db1176096f8e5b4dd712183d6d654e1498a0ed8ff9911c2b53edd74473a3a
+        format: qcow2
+        sizeBytes: 2317484032
+        path: target/workstation/output-workstation/relay-yard-workstation.qcow2
     networks:
       - name: internal
         ip: 10.10.1.20

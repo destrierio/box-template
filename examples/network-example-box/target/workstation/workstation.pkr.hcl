@@ -44,7 +44,10 @@ source "qemu" "workstation" {
   ssh_password     = var.ssh_password
   ssh_timeout      = "20m"
   ssh_username     = var.ssh_username
-  vm_name          = "relay-yard-workstation"
+  # ⚠️ The .qcow2 suffix is load-bearing: `boxr box push` finds a built disk by
+  # file extension, so a bare vm_name produces a good image the CLI never
+  # uploads, and the submission describes a host with no disk behind it.
+  vm_name          = "relay-yard-workstation.qcow2"
 }
 
 build {
