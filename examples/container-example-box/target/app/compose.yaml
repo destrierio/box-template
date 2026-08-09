@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    image: destrier/bulletin:dev
+    ports:
+      - "8000:8000"
