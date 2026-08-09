@@ -4,7 +4,7 @@
 # Identity
 id: relay-yard
 competitionId: reference-examples
-version: 1.0.0
+version: 1.0.3
 name: "Relay Yard"
 authors: [destrier-team]
 # Classification
@@ -34,7 +34,7 @@ hosts:
       publishedImage:
         # written by `boxr box submit` — do not edit by hand
         image: asia-southeast1-docker.pkg.dev/project-dd005b5a-f6e7-4839-b36/destrier-boxes/org/vlf39vngzfd8sru05h3r8bcpbcarxtnn/relay-yard/gateway
-        digest: sha256:891e59cb367ccac7365154f1c7e8a329be2749f13058688f886928b0f4121777
+        digest: sha256:5b4695b67010e19b1ca7394cfe05650ba4cd00e1551e42c23bc2fef01547b88d
         provenance:
           source: target/gateway
           contextDigest: sha256:91b50c6d8d50e3222ecce5182c41e4205945443d4095ee03cca860226b975f9c
@@ -46,19 +46,20 @@ hosts:
         ip: 10.10.1.10
     healthcheck: "http:8000/"
   - name: workstation
-    kind: vm
-    os: linux
+    # ⚠️ A CONTAINER, matching the gateway. A run goes to ONE backend, so every
+    # host in a box must be the same kind; a box mixing a container with a disk
+    # image is refused at compile with "this box mixes substrates".
+    kind: container
     build:
-      # ⚠️ `image`, not `source`: the compiler refuses a vm host that builds from
-      # source, because nothing builds and publishes host images yet. Run Packer
-      # yourself and point this at what it produced; `boxr box push` uploads the
-      # file and rewrites this into its content digest.
-      image:
-        # written by `boxr box push` — do not edit by hand
-        artifact: sha256:e18db1176096f8e5b4dd712183d6d654e1498a0ed8ff9911c2b53edd74473a3a
-        format: qcow2
-        sizeBytes: 2317484032
-        path: target/workstation/output-workstation/relay-yard-workstation.qcow2
+      source: target/workstation
+      publishedImage:
+        # written by `boxr box submit` — do not edit by hand
+        image: asia-southeast1-docker.pkg.dev/project-dd005b5a-f6e7-4839-b36/destrier-boxes/org/vlf39vngzfd8sru05h3r8bcpbcarxtnn/relay-yard/workstation
+        digest: sha256:c8246ab6de1b8aff5cf8e14e3e53fd9699a851a692fba3fa8377e5d04106888f
+        provenance:
+          source: target/workstation
+          contextDigest: sha256:4eb5b1dc444161bd6f0859b00dbcdbdd496ceb8a20e086c8393bb9f4e4b6cc2b
+          builder: boxr/dev
     networks:
       - name: internal
         ip: 10.10.1.20
