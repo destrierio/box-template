@@ -44,10 +44,7 @@ source "qemu" "host" {
   ssh_password     = var.ssh_password
   ssh_timeout      = "20m"
   ssh_username     = var.ssh_username
-  # ⚠️ The .qcow2 SUFFIX IS LOAD-BEARING. `boxr box push` finds a built disk by
-  # file extension, so a Packer default of a bare `vm_name` produces a perfectly
-  # good 2 GB image that the CLI does not recognise and never uploads -- and the
-  # submission goes through describing a host with no disk behind it.
+  # Keep the qcow2 suffix so the built disk is easy to identify and upload.
   vm_name          = "signal-desk.qcow2"
 }
 

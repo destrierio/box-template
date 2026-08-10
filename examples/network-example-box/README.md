@@ -6,7 +6,7 @@
 | Competition ID | `reference-examples` |
 | Difficulty | `hard` |
 | Run type | `network` |
-| Target OS | `mixed` |
+| Target OS | `linux` |
 | Categories | `web`, `lateral-movement` |
 
 
@@ -42,4 +42,4 @@ The endpoint accepts a user-supplied URL and makes the request from the gateway 
 
 ## Notes
 
-The environment contains a Docker-built gateway and a Linux virtual machine built with Packer. The gateway is connected to both networks and provides the intended pivot from the external network into the otherwise inaccessible internal workstation.
+The environment contains two Docker-built services. The gateway is connected to both networks and provides the intended pivot from the external network into the otherwise inaccessible internal workstation.

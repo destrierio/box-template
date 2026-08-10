@@ -51,7 +51,7 @@ boxr box submit --help
 
 Container hosts are built using **Docker**. `boxr box submit` publishes container hosts, uploads virtual machine disk images, and opens the submission.
 
-A virtual machine host may instead ship a prebuilt disk image: point `build.image` at it and `boxr box submit` uploads it with the rest of the box. Domain controllers are the one host that **must** be provided this way, because they are never built from source.
+Virtual machine hosts ship a prebuilt disk image: point `build.image` at it and `boxr box submit` uploads it with the rest of the box. Domain controllers are always provided this way because they are never built from source.
 
 
 ## Documentation

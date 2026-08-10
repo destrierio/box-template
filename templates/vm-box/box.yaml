@@ -37,7 +37,7 @@ hosts:
     kind: vm
     os: linux
     build:
-      source: target/host             # Dir with your Packer template
+      image: target/host/host.qcow2   # Prebuilt VM disk image
     networks:
       - name: main
         ip: 10.10.0.10                # Static IP, inside the network's /24

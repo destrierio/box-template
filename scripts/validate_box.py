@@ -86,14 +86,6 @@ def box_path(box_dir: Path, raw_path: str, field: str, errors: list[str]) -> Pat
     return resolved
 
 
-def has_packer_definition(source_dir: Path) -> bool:
-    try:
-        candidates = (*source_dir.glob("*.pkr.hcl"), *source_dir.glob("*.pkr.json"))
-        return any(candidate.is_file() for candidate in candidates)
-    except OSError:
-        return False
-
-
 def check(box_yaml: Path) -> list[str]:
     errors: list[str] = []
     box_dir = box_yaml.parent
@@ -159,6 +151,8 @@ def check(box_yaml: Path) -> list[str]:
         errors.append("runType 'vm' requires exactly one host of kind vm")
     elif run_type == "network" and len(doc["hosts"]) < 2:
         errors.append("runType 'network' requires at least two hosts")
+    elif run_type == "network" and len(set(kinds)) > 1:
+        errors.append("runType 'network' requires all hosts to use the same kind")
 
     used_ips: dict[str, set[str]] = {}
     for host in doc["hosts"]:
@@ -187,6 +181,11 @@ def check(box_yaml: Path) -> list[str]:
                 errors.append(
                     f"host '{name}': declare build.source or build.image, not both"
                 )
+            elif kind == "vm":
+                if source:
+                    errors.append(f"host '{name}': VM hosts must use build.image")
+                elif not image:
+                    errors.append(f"host '{name}': build.image is required")
             elif not source and not image:
                 errors.append(f"host '{name}': build.source or build.image is required")
             elif image and kind != "vm":
@@ -207,17 +206,13 @@ def check(box_yaml: Path) -> list[str]:
                     errors.append(
                         f"host '{name}': container build source '{source}' has no Dockerfile"
                     )
-                elif kind == "vm" and not has_packer_definition(source_dir):
-                    errors.append(
-                        f"host '{name}': VM build source '{source}' has no Packer definition"
-                    )
 
         if image_path:
             resolved_image = box_path(
                 box_dir, image_path, f"host '{name}': build.image", errors
             )
-            # ⚠️ Only checked while `image` is still the author's path. An
-            # already-pushed image legitimately has no file here: the platform
+            # Only checked while `image` is still the author's path. An
+            # already-uploaded image legitimately has no file here: the platform
             # holds the bytes by digest and the path is kept as a breadcrumb.
             if (
                 resolved_image is not None

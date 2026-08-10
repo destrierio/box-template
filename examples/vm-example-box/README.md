@@ -42,4 +42,4 @@ The endpoint joins a user-supplied filename with the document directory without 
 
 ## Notes
 
-The virtual machine is built with Packer. Cloud-init creates the initial build user, while a provisioning script installs and configures the file portal as a systemd-managed service.
+The virtual machine disk is produced with Packer. Cloud-init creates the initial build user, while a provisioning script installs and configures the file portal as a systemd-managed service.

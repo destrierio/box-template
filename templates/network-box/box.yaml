@@ -20,9 +20,9 @@ flags:
   - host: dmz                         # Must match a host below
     gating: root                      # user | root | service-user | administrator | system | domain-admin
     value: "destrier{dmz_p1v07_c0mpl373}"
-  - host: dc                          # Must match a host below
-    gating: domain-admin              # user | root | service-user | administrator | system | domain-admin
-    value: "destrier{d0m41n_4dm1n_pr00f}"
+  - host: internal                    # Must match a host below
+    gating: user                      # user | root | service-user | administrator | system | domain-admin
+    value: "destrier{1n73rn4l_p1v07_pr00f}"
 
 # Networking (each network is a /24 inside 10.10.0.0/16)
 entrypoint:
@@ -45,13 +45,11 @@ hosts:
       - name: corp
         ip: 10.10.1.10                # Static IP, inside the network's /24
     healthcheck: "tcp:80"             # Optional — tcp:PORT | http:PORT/path | https:PORT/path
-  - name: dc
-    kind: vm
-    os: windows
-    role: domain-controller
+  - name: internal
+    kind: container
     build:
-      image: target/dc/dc.vmdk        # A domain controller is never built from source
+      source: target/internal         # Dir with your Dockerfile + app source
     networks:
       - name: corp
         ip: 10.10.1.20                # Static IP, inside the network's /24
-    healthcheck: "tcp:3389"           # Optional — tcp:PORT | http:PORT/path | https:PORT/path
+    healthcheck: "tcp:80"             # Optional — tcp:PORT | http:PORT/path | https:PORT/path

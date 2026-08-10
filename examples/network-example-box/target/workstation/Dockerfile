@@ -1,10 +1,5 @@
-# The internal workstation: reachable only from `internal`, which the entry
-# network cannot route to. Its flag is the pivot's proof.
-#
-# ⚠️ A CONTAINER, not a vm, and that is a platform constraint rather than a
-# preference: a run goes to ONE backend, so every host in a box must be the same
-# kind. This box's gateway is a container, so this is too. A mixed box is
-# refused at compile with "this box mixes substrates".
+# The internal workstation is reachable only from the internal network.
+# It stays container-backed so this box uses one host kind throughout.
 FROM python:3.12-slim
 
 RUN useradd --create-home --shell /usr/sbin/nologin analyst

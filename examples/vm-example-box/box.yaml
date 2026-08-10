@@ -29,12 +29,9 @@ hosts:
     kind: vm
     os: linux
     build:
-      # ⚠️ `image`, not `source`. The compiler refuses a VM host that builds from
-      # source -- nothing builds and publishes host images yet -- so an author
-      # runs Packer themselves and points this at what it produced. `boxr box
-      # push` uploads the file and rewrites this key into its content digest.
+      # Uploaded image metadata is generated during submission. New boxes should
+      # start with a local disk path and let the submission workflow rewrite it.
       image:
-        # written by `boxr box push` — do not edit by hand
         artifact: sha256:2fe400c0bba86413c77e7783d833d32190f0560dc964bf1898ed125e711a0c45
         format: qcow2
         sizeBytes: 2305949696
@@ -42,7 +39,4 @@ hosts:
     networks:
       - name: main
         ip: 10.10.2.10
-    # Readiness, declared. A native hop is probed for this directly by the
-    # controller over the run network; a QEMU hop answers it from inside the
-    # cell. Declaring it no longer decides the substrate.
     healthcheck: "http:80/health"

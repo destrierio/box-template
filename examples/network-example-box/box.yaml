@@ -31,14 +31,6 @@ hosts:
     kind: container
     build:
       source: target/gateway
-      publishedImage:
-        # written by `boxr box submit` — do not edit by hand
-        image: asia-southeast1-docker.pkg.dev/project-dd005b5a-f6e7-4839-b36/destrier-boxes/org/vlf39vngzfd8sru05h3r8bcpbcarxtnn/relay-yard/gateway
-        digest: sha256:27793d1de987bc258d617511be06d7153b48f120ddec3a045f01d4a313ba7622
-        provenance:
-          source: target/gateway
-          contextDigest: sha256:91b50c6d8d50e3222ecce5182c41e4205945443d4095ee03cca860226b975f9c
-          builder: boxr/dev
     networks:
       - name: external
         ip: 10.10.0.10
@@ -46,20 +38,9 @@ hosts:
         ip: 10.10.1.10
     healthcheck: "http:8000/"
   - name: workstation
-    # ⚠️ A CONTAINER, matching the gateway. A run goes to ONE backend, so every
-    # host in a box must be the same kind; a box mixing a container with a disk
-    # image is refused at compile with "this box mixes substrates".
     kind: container
     build:
       source: target/workstation
-      publishedImage:
-        # written by `boxr box submit` — do not edit by hand
-        image: asia-southeast1-docker.pkg.dev/project-dd005b5a-f6e7-4839-b36/destrier-boxes/org/vlf39vngzfd8sru05h3r8bcpbcarxtnn/relay-yard/workstation
-        digest: sha256:f4ff2c56aee1c90b586267e4faa6f53ee7a17b6fd301ec3e74e0220759073140
-        provenance:
-          source: target/workstation
-          contextDigest: sha256:4eb5b1dc444161bd6f0859b00dbcdbdd496ceb8a20e086c8393bb9f4e4b6cc2b
-          builder: boxr/dev
     networks:
       - name: internal
         ip: 10.10.1.20
