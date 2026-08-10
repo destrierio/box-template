@@ -29,7 +29,8 @@ variable "ssh_password" {
 
 source "qemu" "host" {
   accelerator      = "none"
-  cd_files         = ["cloud-init/user-data", "cloud-init/meta-data"]
+  # Paths are ${path.root}-relative so a build works from any directory.
+  cd_files         = ["${path.root}/cloud-init/user-data", "${path.root}/cloud-init/meta-data"]
   cd_label         = "cidata"
   communicator     = "ssh"
   cpus             = 1
@@ -39,7 +40,7 @@ source "qemu" "host" {
   iso_checksum     = var.iso_checksum
   iso_url          = var.iso_url
   memory           = 1024
-  output_directory = "output-signal-desk"
+  output_directory = "${path.root}/output-signal-desk"
   shutdown_command = "echo '${var.ssh_password}' | sudo -S shutdown -P now"
   ssh_password     = var.ssh_password
   ssh_timeout      = "20m"
@@ -53,6 +54,6 @@ build {
 
   provisioner "shell" {
     execute_command = "sudo -E sh -c '{{ .Vars }} {{ .Path }}'"
-    script          = "provision.sh"
+    script          = "${path.root}/provision.sh"
   }
 }
