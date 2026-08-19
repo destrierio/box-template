@@ -206,12 +206,12 @@
             "type": "object",
             "additionalProperties": false,
             "minProperties": 1,
-            "description": "How the host is built. Containers are built from `source`; virtual machines use a prebuilt `image`. Domain controllers must use `image`.",
+            "description": "How the host is built. Containers are built from `source`; virtual machines can use either `source` or a prebuilt `image`. Domain controllers must use `image`.",
             "properties": {
               "source": {
                 "type": "string",
                 "minLength": 1,
-                "description": "Relative path within the box to a Dockerfile directory for containers."
+                "description": "Relative path within the box to a Dockerfile directory for containers or a Packer definition directory for virtual machines."
               },
               "publishedImage": {
                 "type": "object",
@@ -417,11 +417,19 @@
             "then": {
               "properties": {
                 "build": {
-                  "allOf": [
+                  "not": {
+                    "required": [
+                      "publishedImage"
+                    ]
+                  },
+                  "oneOf": [
                     {
+                      "required": [
+                        "source"
+                      ],
                       "not": {
                         "required": [
-                          "publishedImage"
+                          "image"
                         ]
                       }
                     },
