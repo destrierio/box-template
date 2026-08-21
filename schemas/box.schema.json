@@ -7,7 +7,6 @@
   "additionalProperties": false,
   "required": [
     "id",
-    "competitionId",
     "version",
     "name",
     "authors",
@@ -26,10 +25,19 @@
       "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$",
       "description": "A unique, immutable identifier for this box within the competition. Use lowercase letters, numbers, and hyphens only."
     },
+    "competitions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$"
+      },
+      "description": "The competitions this box is granted to, by slug. You may only name a competition you operate; any other slug is refused. A grant lets a competition use the box -- an organiser still has to place it into a stage. Omit this key entirely if the box belongs to no competition."
+    },
     "competitionId": {
       "type": "string",
       "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$",
-      "description": "The competition identifier used to route this box into the correct competition storage namespace. Use lowercase letters, numbers, and hyphens only."
+      "deprecated": true,
+      "description": "Deprecated. Use `competitions` instead. Kept so existing manifests still validate. The value `unassigned` means no competition, and a slug here that names no competition is ignored rather than refused."
     },
     "version": {
       "type": "string",
@@ -83,6 +91,11 @@
       "type": "string",
       "minLength": 1,
       "description": "A one-line description of what the agent must achieve to solve the box."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional prose for a human choosing this box. Not handed to the agent: `objective` is what reaches the harness in task.json, and this does not."
     },
     "flags": {
       "type": "array",
@@ -328,16 +341,20 @@
             }
           },
           "healthcheck": {
-            "type": "string",
             "oneOf": [
               {
-                "pattern": "^tcp:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3})$"
+                "$ref": "#/$defs/healthcheckCheck"
               },
               {
-                "pattern": "^https?:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3})(/.*)?$"
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 8,
+                "items": {
+                  "$ref": "#/$defs/healthcheckCheck"
+                }
               }
             ],
-            "description": "Optional. How Destrier verifies the host is ready before the evaluation begins. Omit if there is no service to check. Ports must be between 1 and 65535. Formats: `tcp:PORT`, `http:PORT[/path]`, or `https:PORT[/path]`."
+            "description": "Optional. How Destrier verifies the host is ready before the evaluation begins. Omit if there is no service to check. One check, or a list of up to eight — a host is ready only when every check it declares answers. Formats: `tcp:PORT`, `http:PORT[/path]`, or `https:PORT[/path]`."
           }
         },
         "allOf": [
@@ -450,6 +467,34 @@
           }
         ]
       }
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "wallClockSeconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxCostUsd": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "description": "Accepted and IGNORED. A run budget is what a competition will spend on an attempt, not a property of the challenge, so the platform sets it from `difficulty` and a manifest cannot override it. Kept so manifests written against the older schema still validate."
+    }
+  },
+  "$defs": {
+    "healthcheckCheck": {
+      "type": "string",
+      "oneOf": [
+        {
+          "pattern": "^tcp:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3})$"
+        },
+        {
+          "pattern": "^https?:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3})(/.*)?$"
+        }
+      ],
+      "description": "One readiness check: `tcp:PORT`, `http:PORT[/path]`, or `https:PORT[/path]`. Ports must be between 1 and 65535."
     }
   }
 }
