@@ -85,3 +85,40 @@ WantedBy=multi-user.target
 UNIT
 
 systemctl enable signal-desk.service
+# ⚠️ THE IMAGE MUST NOT PIN A MAC ADDRESS.
+#
+# cloud-init writes /etc/netplan/50-cloud-init.yaml from whatever NIC it saw at
+# build time, and it writes a `match: macaddress:` into it. Packer's QEMU
+# builder always uses 52:54:00:12:34:56, so that address gets frozen into the
+# shipped image -- and on any substrate that assigns its own MAC, netplan then
+# matches NOTHING, brings up no interface, and the guest never sends DHCP.
+#
+# That is not a hypothetical: it made every Ubuntu box in the catalog silently
+# unreachable on Proxmox, where each cell gets a derived MAC so the run's DHCP
+# server can key a host's address on it. The guest booted perfectly and simply
+# had no network. Do not "fix" that end by handing cells the QEMU default --
+# a two-host box would then carry one MAC twice on a single segment.
+#
+# Matching on interface NAME covers e1000, virtio and any slot the interface
+# lands in, on every substrate.
+rm -f /etc/netplan/50-cloud-init.yaml
+cat >/etc/netplan/10-destrier.yaml <<'NETPLAN'
+network:
+  version: 2
+  ethernets:
+    destrier:
+      match:
+        name: "e*"
+      dhcp4: true
+      dhcp-identifier: mac
+      optional: true
+NETPLAN
+chmod 600 /etc/netplan/10-destrier.yaml
+
+# Stop cloud-init regenerating the file this just replaced.
+mkdir -p /etc/cloud/cloud.cfg.d
+cat >/etc/cloud/cloud.cfg.d/99-destrier-disable-network.cfg <<'CFG'
+network: {config: disabled}
+CFG
+
+netplan generate
