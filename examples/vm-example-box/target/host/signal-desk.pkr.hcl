@@ -7,6 +7,14 @@ packer {
   }
 }
 
+variable "accelerator" {
+  type    = string
+  # "none" is TCG software emulation: slow, but it builds anywhere, including a
+  # laptop with no KVM and an ARM host emulating x86_64. A build machine with
+  # /dev/kvm should pass `-var accelerator=kvm` -- same image, minutes not hours.
+  default = "none"
+}
+
 variable "iso_url" {
   type    = string
   default = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
@@ -28,7 +36,7 @@ variable "ssh_password" {
 }
 
 source "qemu" "host" {
-  accelerator      = "none"
+  accelerator      = var.accelerator
   # Paths are ${path.root}-relative so a build works from any directory.
   cd_files         = ["${path.root}/cloud-init/user-data", "${path.root}/cloud-init/meta-data"]
   cd_label         = "cidata"
