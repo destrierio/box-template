@@ -4,7 +4,7 @@
 # Identity
 id: signal-desk
 competitionId: reference-examples
-version: 1.0.4
+version: 1.0.5
 name: "Signal Desk"
 authors: [destrier-team]
 # Classification
@@ -31,11 +31,7 @@ hosts:
     build:
       # Uploaded image metadata is generated during submission. New boxes should
       # start with a local disk path and let the submission workflow rewrite it.
-      image:
-        artifact: sha256:2fe400c0bba86413c77e7783d833d32190f0560dc964bf1898ed125e711a0c45
-        format: qcow2
-        sizeBytes: 2305949696
-        path: target/host/output-signal-desk/signal-desk.qcow2
+      image: target/host/output-signal-desk/signal-desk.qcow2
     networks:
       - name: main
         ip: 10.10.2.10
