@@ -31,6 +31,14 @@ hosts:
     kind: container
     build:
       source: target/gateway
+      publishedImage:
+        # written by `boxr box submit` — do not edit by hand
+        image: registry.destrier.io/destrier-boxes/org/cmt8z8jz4000001mliy3l30g0/relay-yard/gateway
+        digest: sha256:d78e7272b447595b15d9e584eba311a897dd54a3ef59a7fd93619799d4b61873
+        provenance:
+          source: target/gateway
+          contextDigest: sha256:91b50c6d8d50e3222ecce5182c41e4205945443d4095ee03cca860226b975f9c
+          builder: boxr/0.2.2
     networks:
       - name: external
         ip: 10.10.0.10
@@ -41,6 +49,14 @@ hosts:
     kind: container
     build:
       source: target/workstation
+      publishedImage:
+        # written by `boxr box submit` — do not edit by hand
+        image: registry.destrier.io/destrier-boxes/org/cmt8z8jz4000001mliy3l30g0/relay-yard/workstation
+        digest: sha256:e80a7d23235255f06f48900ad41d631a9989925e951c2a4d6a1ca83bc216252d
+        provenance:
+          source: target/workstation
+          contextDigest: sha256:6c9a89bf05ed1b8c198aa732a5d4da6feab0f6c10d6e0b469be3d89f553eabe3
+          builder: boxr/0.2.2
     networks:
       - name: internal
         ip: 10.10.1.20
