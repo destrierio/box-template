@@ -15,7 +15,10 @@ For each box, checks that:
 5. Network settings and host IP addresses are valid.
 6. The required files and directories are present.
 7. Static flag values are unique.
-8. Each competition and box identity maps to a unique storage namespace.
+8. Each box `id` is unique across the repository.
+
+Also warns, without failing, when a manifest still sets the deprecated
+`competitionId`.
 
 Exits with status 0 if all checks pass, otherwise 1.
 """
@@ -275,9 +278,22 @@ def check(box_yaml: Path) -> list[str]:
     return errors
 
 
-def manifest_identity(box_yaml: Path) -> tuple[str, str]:
+def manifest_identity(box_yaml: Path) -> str:
+    # A box is addressed by its `id` within the submitting workspace. The
+    # deprecated `competitionId` never namespaced anything, so it is not part of
+    # the identity.
+    return yaml.safe_load(box_yaml.read_text())["id"]
+
+
+def deprecations(box_yaml: Path) -> list[str]:
     doc = yaml.safe_load(box_yaml.read_text())
-    return doc["competitionId"], doc["id"]
+    if isinstance(doc, dict) and "competitionId" in doc:
+        return [
+            "competitionId is deprecated and a slug that names no competition is "
+            "silently ignored; remove it and grant the box to the organiser after "
+            "it is published"
+        ]
+    return []
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -292,24 +308,24 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     box_errors: dict[Path, list[str]] = {}
-    valid_identities: list[tuple[Path, str, str]] = []
+    box_warnings: dict[Path, list[str]] = {}
+    valid_identities: list[tuple[Path, str]] = []
     for box in boxes:
         errors = check(box)
         box_errors[box] = errors
         if not errors:
-            competition_id, box_id = manifest_identity(box)
-            valid_identities.append((box, competition_id, box_id))
+            valid_identities.append((box, manifest_identity(box)))
+            box_warnings[box] = deprecations(box)
 
     seen_identities: dict[str, Path] = {}
-    for box, competition_id, box_id in valid_identities:
-        identity = f"{competition_id}/{box_id}"
-        if identity in seen_identities:
-            original = seen_identities[identity]
+    for box, box_id in valid_identities:
+        if box_id in seen_identities:
+            original = seen_identities[box_id]
             box_errors[box].append(
-                f"identity: duplicate competitionId/id '{identity}' also used by {original}"
+                f"identity: duplicate id '{box_id}' also used by {original}"
             )
         else:
-            seen_identities[identity] = box
+            seen_identities[box_id] = box
 
     failed = 0
     for box in boxes:
@@ -325,6 +341,8 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"        - {error}")
         else:
             print(f"OK    {relative_path}")
+        for warning in box_warnings.get(box, []):
+            print(f"        ! warning: {warning}")
 
     if failed:
         print(f"\n{failed} box(es) failed validation")

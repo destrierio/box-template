@@ -25,6 +25,8 @@ variable "iso_checksum" {
   default = "file:https://cloud-images.ubuntu.com/noble/current/SHA256SUMS"
 }
 
+# Build-time only. This account exists so Packer can SSH in and provision, and
+# the seal at shutdown locks it; nothing in the finished image accepts it.
 variable "ssh_username" {
   type    = string
   default = "destrier"
@@ -49,7 +51,10 @@ source "qemu" "host" {
   iso_url          = var.iso_url
   memory           = 1024
   output_directory = "${path.root}/output-signal-desk"
-  shutdown_command = "echo '${var.ssh_password}' | sudo -S shutdown -P now"
+  # Seal the image as root, then power off: provision.sh installs the seal,
+  # which locks this build user and turns off password SSH. `&&` so a failed
+  # seal leaves the VM running and fails the build rather than shipping it.
+  shutdown_command = "echo '${var.ssh_password}' | sudo -S sh -c '/usr/local/sbin/signal-desk-seal && shutdown -P now'"
   ssh_password     = var.ssh_password
   ssh_timeout      = "20m"
   ssh_username     = var.ssh_username

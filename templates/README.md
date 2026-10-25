@@ -5,7 +5,6 @@ Copy this README into each box directory and keep this structure for all submiss
 | Field | Value |
 | --- | --- |
 | Box ID | `<id from box.yaml>` |
-| Competition ID | `<competitionId from box.yaml>` |
 | Difficulty | `<easy \| medium \| hard \| insane>` |
 | Run type | `<container \| vm \| network>` |
 | Target OS | `<linux \| windows \| mixed>` |

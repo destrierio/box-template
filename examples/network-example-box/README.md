@@ -3,7 +3,6 @@
 | Field | Value |
 | --- | --- |
 | Box ID | `relay-yard` |
-| Competition ID | `reference-examples` |
 | Difficulty | `hard` |
 | Run type | `network` |
 | Target OS | `linux` |

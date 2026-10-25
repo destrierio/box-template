@@ -3,7 +3,6 @@
 
 # Identity
 id: signal-desk
-competitionId: reference-examples
 version: 1.0.6
 name: "Signal Desk"
 authors: [destrier-team]

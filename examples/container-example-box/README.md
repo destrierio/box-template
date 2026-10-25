@@ -3,7 +3,6 @@
 | Field | Value |
 | --- | --- |
 | Box ID | `bulletin` |
-| Competition ID | `reference-examples` |
 | Difficulty | `easy` |
 | Run type | `container` |
 | Target OS | `linux` |

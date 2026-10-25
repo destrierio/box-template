@@ -3,7 +3,6 @@
 
 # Identity
 id: relay-yard
-competitionId: reference-examples
 version: 1.0.4
 name: "Relay Yard"
 authors: [destrier-team]

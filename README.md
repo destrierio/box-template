@@ -19,7 +19,9 @@ Template repository for creating and submitting challenge boxes for [Destrier](h
 
 > Always keep your box and related challenge materials **private, including after submission**. Paid contributors may also be required to sign a **confidentiality agreement**.
 
-Each `box.yaml` declares both `competitionId` and `id`. `competitionId` is the competition slug used for storage and submission routing; `id` is the unique box slug within that competition.
+Each `box.yaml` declares an `id`, the box's permanent slug. It does not name a competition. A published box is private to the workspace that submitted it; to let a competition use it, grant it to the organiser's workspace from the box's **Sharing** panel on Destrier, and the organiser decides which stage it goes into. See [Competitions and access](https://docs.destrier.io/contributing/box-structure#competitions-and-access).
+
+Do not add `competitionId`. It is deprecated, `boxr box lint` warns about it, and a slug in it that names no competition is silently ignored, so the box joins nothing and nobody is told.
 
 `box.yaml` does not declare cost budgets or evaluation timeouts. Destrier derives those from stage policy, box difficulty, and competition settings.
 
