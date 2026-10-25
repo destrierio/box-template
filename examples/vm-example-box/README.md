@@ -3,7 +3,6 @@
 | Field | Value |
 | --- | --- |
 | Box ID | `signal-desk` |
-| Competition ID | `reference-examples` |
 | Difficulty | `easy` |
 | Run type | `vm` |
 | Target OS | `linux` |

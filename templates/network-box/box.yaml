@@ -2,8 +2,9 @@
 # Docs: https://docs.destrier.io/contributing/box-structure#manifest-examples
 
 # Identity
-id: your-box-id                       # Unique within the competition, lowercase, hyphens only
-competitionId: your-competition-id    # Competition slug, lowercase, hyphens only
+id: your-box-id                       # Permanent box slug, lowercase, hyphens only
+# No competition key: a box reaches a competition when you grant it to the
+# organiser after it is published. See the docs link above.
 version: 1.0.0
 name: "Your box name"
 authors: [your-handle]
