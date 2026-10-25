@@ -1,4 +1,7 @@
 #cloud-config
+# Build-time only: Packer logs in as this user to run provision.sh. The seal
+# that provision.sh installs locks it, removes its sudo rule and turns off
+# password SSH before the image is shut down, so none of this ships.
 users:
   - name: destrier
     groups: [sudo]

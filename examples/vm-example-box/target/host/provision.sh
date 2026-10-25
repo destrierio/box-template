@@ -122,3 +122,48 @@ network: {config: disabled}
 CFG
 
 netplan generate
+
+# ⚠️ THE BUILD USER MUST NOT SURVIVE INTO THE SHIPPED IMAGE.
+#
+# cloud-init/user-data creates `destrier` with a public password, passwordless
+# sudo and SSH password login, because Packer needs a way in to run this script.
+# Left in place, that account is a root shell for anyone who reaches sshd -- an
+# agent would skip the path traversal entirely and read the flag as root.
+#
+# The seal cannot run here: Packer still needs this account to send the final
+# shutdown. So this installs it, and signal-desk.pkr.hcl's shutdown_command
+# runs it as root immediately before powering off. If the seal fails, the VM
+# never shuts down and the build fails instead of shipping an open image.
+cat >/usr/local/sbin/signal-desk-seal <<'SEAL'
+#!/bin/sh
+set -eu
+
+# Lock the build account: no password, no shell, expired (which also refuses
+# key logins), no sudo, no authorized keys.
+passwd -l destrier
+usermod -s /usr/sbin/nologin -e 1 destrier
+gpasswd -d destrier sudo || true
+rm -f /etc/sudoers.d/90-cloud-init-users
+rm -rf /home/destrier/.ssh
+
+# No password SSH for anyone. cloud-init's `ssh_pwauth: true` wrote
+# 50-cloud-init.conf; sshd takes the FIRST value it reads, so the override
+# sorts first as well as the cloud-init file being removed.
+rm -f /etc/ssh/sshd_config.d/50-cloud-init.conf
+cat >/etc/ssh/sshd_config.d/01-destrier-hardening.conf <<'SSHD'
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+SSHD
+chmod 644 /etc/ssh/sshd_config.d/01-destrier-hardening.conf
+if command -v sshd >/dev/null 2>&1; then
+  mkdir -p /run/sshd
+  sshd -t
+fi
+
+# The build's user-data must never be applied again on a later boot.
+touch /etc/cloud/cloud-init.disabled
+
+rm -f /usr/local/sbin/signal-desk-seal
+SEAL
+chmod 0700 /usr/local/sbin/signal-desk-seal
